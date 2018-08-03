@@ -14,8 +14,8 @@
 //! use loirc::{connect, Code, Event};
 //!
 //! fn main() {
-//!     // connect to freenode and use the default reconnection settings.
-//!     let (writer, reader) = connect("irc.freenode.net:6667", Default::default(), UTF_8).unwrap();
+//!     // connect to freenode with no tls and use the default reconnection settings.
+//!     let (writer, reader) = connect("irc.freenode.net", 6667, Default::default(), UTF_8, false).unwrap();
 //!     writer.raw(format!("USER {} 8 * :{}\n", "username", "realname"));
 //!     writer.raw(format!("NICK {}\n", "nickname"));
 //!     // Block until something happens.
@@ -35,6 +35,9 @@
 //! ```
 #![deny(missing_docs)]
 extern crate encoding;
+#[macro_use]
+extern crate failure;
+extern crate native_tls;
 
 mod activity_monitor;
 mod code;
@@ -42,6 +45,10 @@ mod connection;
 mod message;
 
 pub use activity_monitor::{ActivityMonitor, MonitorSettings};
-pub use connection::{connect, Event, Error, Reader, ReconnectionSettings, Writer};
 pub use code::Code;
-pub use message::{ParseError, Message, Prefix, PrefixUser};
+pub use connection::{
+    connect, ConnectionBuilder, ConnectionError, Event, Reader, ReconnectionSettings, Writer,
+};
+pub use message::{Message, ParseError, Prefix, PrefixUser};
+
+pub use failure::Error;
